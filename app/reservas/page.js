@@ -1,20 +1,35 @@
 "use client";
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FormCitas from '../components/FormCitas/FormCitas';
 import Card from '../components/Card/Card';
-
 
 export default function Reservas() {
   const [citas, setCitas] = useState([]);
 
+
+  useEffect(() => {
+    const citasGuardadas = localStorage.getItem('citas');
+    if (citasGuardadas) {
+      setCitas(JSON.parse(citasGuardadas));
+    }
+  }, []);
+
+
+  const guardarCitasEnLocalStorage = (citasActualizadas) => {
+    localStorage.setItem('citas', JSON.stringify(citasActualizadas));
+  };
+
   const agregarCita = (nuevaCita) => {
     nuevaCita.id = Date.now();
-    setCitas([...citas, nuevaCita]);
+    const citasActualizadas = [...citas, nuevaCita];
+    setCitas(citasActualizadas);
+    guardarCitasEnLocalStorage(citasActualizadas);  
   };
 
   const eliminarCita = (id) => {
-    setCitas(citas.filter(cita => cita.id !== id));
+    const citasActualizadas = citas.filter(cita => cita.id !== id);
+    setCitas(citasActualizadas);
+    guardarCitasEnLocalStorage(citasActualizadas);
   };
 
   return (
